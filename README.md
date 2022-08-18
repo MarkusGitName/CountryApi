@@ -194,78 +194,79 @@ ENTRYPOINT ["dotnet", "CountryApi.dll"]
 </code>
 
 ## docker-compose
->> docker-compose up
+> docker-compose up
 Die docker compose up command werk ook net as terminaal se path n docker-compose.yml file bevat.
 
 <code>
-version: '3.2'
 
-services:
- 
-  proxy:
-    container_name: proxy
-    image: nginx:latest
+    version: '3.2'
+
+    services:
+
+      proxy:
+        container_name: proxy
+        image: nginx:latest
+        networks:
+        - apinetwork
+        ports:
+        - "80:80"
+        - "443:443"
+        depends_on:
+        - countryapi
+        volumes:
+        - ./Resources/nginx.conf:/etc/nginx/nginx.conf
+        - /etc/letsencrypt/:/etc/letsencrypt/
+
+
+      countryapi:
+        container_name: countryapi
+        image: reponame/imagename       // verwys na die reponame en imagename van die docker build command
+        environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        expose:
+        - 80
+        ports:
+        - "81:80"
+        depends_on:
+        - countryapi
+        networks:
+        - apinetwork
+        depends_on:
+        - countrydb
+
+      countrydb:
+        image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+        expose:
+        - 1433
+        ports:
+        - "1400:1433"
+        environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Markus@2
+        - MSSQL_PID=Developer
+        networks:
+        - apinetwork
+        volumes:
+        - type: bind
+          source: ./data
+          target: /var/opt/mssql/data
+        - type: bind
+          source: ./log
+          target: /var/opt/mssql/log
+        - type: bind
+          source: ./secrets
+          target: /var/opt/mssql/secrets
+
+
+
     networks:
-    - apinetwork
-    ports:
-    - "80:80"
-    - "443:443"
-    depends_on:
-    - countryapi
-    volumes:
-    - ./Resources/nginx.conf:/etc/nginx/nginx.conf
-    - /etc/letsencrypt/:/etc/letsencrypt/
-    
-
-  countryapi:
-    container_name: countryapi
-    image: reponame/imagename       // verwys na die reponame en imagename van die docker build command
-    environment:
-    - ASPNETCORE_ENVIRONMENT=Development
-    expose:
-    - 80
-    ports:
-    - "81:80"
-    depends_on:
-    - countryapi
-    networks:
-    - apinetwork
-    depends_on:
-    - countrydb
-      
-  countrydb:
-    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
-    expose:
-    - 1433
-    ports:
-    - "1400:1433"
-    environment:
-    - ACCEPT_EULA=Y
-    - SA_PASSWORD=Markus@2
-    - MSSQL_PID=Developer
-    networks:
-    - apinetwork
-    volumes:
-    - type: bind
-      source: ./data
-      target: /var/opt/mssql/data
-    - type: bind
-      source: ./log
-      target: /var/opt/mssql/log
-    - type: bind
-      source: ./secrets
-      target: /var/opt/mssql/secrets
-
-    
-
-networks:
-  apinetwork:
+      apinetwork:
 
 </code>
 
 ## Nginx
 
->> sudo -H ./letsencrypt-auto certonly --standalone -d example.com -d www.example.com
+> sudo -H ./letsencrypt-auto certonly --standalone -d example.com -d www.example.com
 
 Die boonste command moet gehardloop word op die host om die nodige ssl sertifikate te genereer. Met die volume mapping in die nginx container trek docker die sertifikate oor van die host af na di container toe. <br>
 Die onderste file word ook met volume mapping van die host af no die nginx container to getrek. Die nginx container gebruik die config file om die versoek te verwys na die beskikbare ssl port toe. 
@@ -293,8 +294,8 @@ http {
         }
         listen 80;
         listen 443 ssl;
-        ssl_certificate /etc/letsencrypt/live/markusmadeleyn.com/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/markusmadeleyn.com/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/<domain>.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/<domain>.com/privkey.pem;
         include /etc/letsencrypt/options-ssl-nginx.conf;
     }
 }
@@ -304,4 +305,9 @@ http {
 ## Volumes
 
 Die volume mapping word gebruik om data te persist as die container ge-restart moet word of net op failure. Databsis data word na die host to gemap in die countryapi container en dan word die ssl en nginx config files van die host af na die proxy container toe gemap.<br> 
+
+## Unit testing
+
+Ongelulig het ek nie kaans gehad om enige Unit tests te skryf nie. Die UI demo het langer geneem as wat ek verwag het.<br>
+Ek het ook meer ge-fokus op integrasie toeste aangesien die projek nie komplekse kelkelasies bevat nie en meer integrasie gefokus is. 
 
