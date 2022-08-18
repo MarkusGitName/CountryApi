@@ -101,15 +101,15 @@ namespace CountryApi.Controllers
             foreach (var entry in entries)
             {
                 var type = entry.Entity.GetType().Name;
-                if (type == "Country")
+                if (type == "CountryTable")
                 {
                     entry.State = EntityState.Modified;
                 }
-                if(type == "Currency" && entry.State != EntityState.Added)
+                if(type == "CurrencyTable" && entry.State != EntityState.Added)
                 {
                     entry.State = EntityState.Modified;
                 }
-                else if (type != "Country" && type != "Currency")
+                else if (type != "CountryTable" && type != "CurrencyTable")
                 {
                     entry.State = EntityState.Added;
                 }
