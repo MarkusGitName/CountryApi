@@ -4,7 +4,17 @@ Eerste keer wat ek .net 6 gebruik so dit het meer tyd gevet as wat ek gedink het
 My ervaring met Entity framework as databasis bestuur bring gereeld die probleem van self verwanskap voor wat lui na eindloose loops, en met die simplistiese databasis van die taak het ek geleentheid gevat om nuwe oplossings te probeer. <br>
 # Postman
 Die postman github action werk nie op die oomblik nie maaar die collection is gestoor by <link> en kan ge import word in postman en daar gehardloop kan word. Die collection toets elke endpoint, maak seker die api reageer soos verwag word, maak seker data word ge update soos verwag word en maak skoon agterna. 
+
 # databasis
+
+// from package manager
+
+> add-migrataion migrationName
+
+
+> update-database
+
+Ad die databasis se conneksie string nie na die live databasis server op my persoonlikke serbver wys nie. kan mens van die boonste twee commands gebruik maak om die databasis te genereer. Die selfde commands laat mens toe om klasse te verander soos nodig en dan die commands te hardloom om die databasis te opdateer.
 
 ### klassse wat net die databasis tafels direk voorstel
 
