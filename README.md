@@ -179,35 +179,35 @@ Die tweede voorbeeld werk as die termenal op die projek se path is.<br>
 
 <code>
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+    FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+    WORKDIR /app
+    EXPOSE 80
+    EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["CountryApi/CountryApi.csproj", "CountryApi/"]
-RUN dotnet restore "CountryApi/CountryApi.csproj"
-COPY . .
-WORKDIR "/src/CountryApi"
-RUN dotnet build "CountryApi.csproj" -c Release -o /app/build
+    FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+    WORKDIR /src
+    COPY ["CountryApi/CountryApi.csproj", "CountryApi/"]
+    RUN dotnet restore "CountryApi/CountryApi.csproj"
+    COPY . .
+    WORKDIR "/src/CountryApi"
+    RUN dotnet build "CountryApi.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "CountryApi.csproj" -c Release -o /app/publish
+    FROM build AS publish
+    RUN dotnet publish "CountryApi.csproj" -c Release -o /app/publish
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CountryApi.dll"]
+    FROM base AS final
+    WORKDIR /app
+    COPY --from=publish /app/publish .
+    ENTRYPOINT ["dotnet", "CountryApi.dll"]
 
-</code>
-<code>
+    </code>
+    <code>
 
-</code>
+    </code>
 
-## docker-compose
-> docker-compose up
-Die docker compose up command werk ook net as terminaal se path n docker-compose.yml file bevat.
+    ## docker-compose
+    > docker-compose up
+    Die docker compose up command werk ook net as terminaal se path n docker-compose.yml file bevat.
 
 <code>
 
