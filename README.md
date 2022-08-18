@@ -1,10 +1,11 @@
 # CountryApi
 Gebou in .net 6 <br>
-Eerste keer wat ek .net 6 gebruik so dit het meer tyd gevet as wat ek gedink het. Ek het wel geleentheid gevat om om die raamwerk beter te leer ken <br>
-My ervaring met Entity framework as databasis bestuur bring gereeld die probleem van 'self verwanskap' voor wat lui na eindloose loops, en met die simplistiese databasis van die taak het ek geleentheid gevat om nuwe oplossings te probeer. <br>
+Eerste keer wat ek .net 6 gebruik so dit het meer tyd gevet as wat ek gedink het. Ek het wel geleentheid gevat om die raamwerk beter te leer ken. <br>
+My ervaring met Entity framework as databasis bestuur bring gereeld die probleem van self verwanskap voor wat lui na eindloose loops, en met die simplistiese databasis van die taak het ek geleentheid gevat om nuwe oplossings te probeer. <br>
 
 # databasis
-### classs wat net die databasis tafels direk voorstel
+
+### klassse wat net die databasis tafels direk voorstel
 
 <code>
 
@@ -86,7 +87,7 @@ My ervaring met Entity framework as databasis bestuur bring gereeld die probleem
     }
 </code>
 
-### classe wat terug gestuur word client to van API
+### klasse wat terug gestuur word client to van API
 
 <code>
 
@@ -126,7 +127,7 @@ My ervaring met Entity framework as databasis bestuur bring gereeld die probleem
     }
 </code>
 
-## Beskruiwing
+## Beskrywing
 
 Die klasse is so opgestel dat ek enige verwanskappe kan vermy wat dalk na n self vewanskappe kan lui. Die generise 'Currency' en 'Country' klasse se 'Properties' stem direk ooreen met die 'Fields' van die databasis. Die volgende klasse genoemd
 'CurrencyTable' en 'CountryTable' behou die verwanskap tussen die twee tafels. Die klasse word vermy as ek data terug stuur na die klient. Ek noem hulle spesifiek met 'Table' agterna omdat die klasse gebruik work deer Entity framwork om die databasis en sy verwantskappe te genereer. <br>
