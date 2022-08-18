@@ -285,11 +285,11 @@ Die onderste file word ook met volume mapping van die host af no die nginx conta
 
 <code>
 
-events {
-    worker_connections 1024;
-}
+    events {
+        worker_connections 1024;
+    }
 
-http {
+    http {
         client_max_body_size 80000M;
     server {
         server_name <serverUrl>;
