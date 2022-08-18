@@ -8,9 +8,12 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
+      push: write
     steps:
     - uses: actions/first-interaction@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: "Message that will be displayed on users' first issue"
         pr-message: "Baie dankie vir die offer. Eks in!"
+        push-message:"Hey bru. welcome"
+        
