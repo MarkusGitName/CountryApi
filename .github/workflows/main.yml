@@ -5,63 +5,40 @@ on:
   pull_request:
     branches: [ "master" ]
 jobs:
-  build_docker_image_push_packages:
+  test-api:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: docker build -t $IMAGE_NAME .
-      - run: docker login docker.pkg.github.com -u $GITHUB_ACCOUNT -p ${{secrets.PAT}}
-      
-      - run: |
-          IMAGE_ID=docker.pkg.github.com/${{github.repository}}/$IMAGE_NAME
-
-          # Change all uppercase to lowercase
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
-
-  composeenv_postmanrun:
-    runs-on: ubuntu-latest
-    needs: build_docker_image_push_packages
-    steps: 
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    - run: echo "${{secrets.PAT}}" | docker login docker.pkg.github.com -u $GITHUB_ACCOUNT --password-stdin
-    - run: docker-compose -f $COMPOSE_FILE --env-file $COMPOSE_RESOURCE_FILE --project-name $PROJECT_NAME up -d --remove-orphans
-    - run: sleep 30
-    - run: docker ps
-    
+      
+    # INstall Node on the runner
     - name: Install Node
       uses: actions/setup-node@v1
       with: 
-        node-version: '16.x'
-
+        node-version: '12.x'
+    
+    # Install the newman command line utility and also install the html extra reporter
     - name: Install newman
       run: |
        npm install -g newman
        npm install -g newman-reporter-htmlextra
 
+    # Make directory to upload the test results
     - name: Make Directory for results
-      run: mkdir -p Postman/Results
+      run: mkdir -p testResults
 
+
+    # Run the POSTMAN collection
     - name: Run POSTMAN collection
       run: |
-       newman run Postman/AcquireCore.postman_collection.json -e Postman/Development.postman_environment.json -r htmlextra --reporter-htmlextra-export Postman/Results/AcquireCorePostmanReport.html --reporter-htmlextra-darkTheme  > Postman/Results/AcquireCorePostmanReportDark.html
+       newman run ./Postman/CountryApi.postman_collection  -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
 
+    # Upload the contents of Test Results directory to workspace
     - name: Output the run Details
       uses: actions/upload-artifact@v2
       with: 
        name: RunReports
-       path: Postman/Results
+       path: testResults
      
 
 
