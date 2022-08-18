@@ -20,7 +20,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(201);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -41,7 +41,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"string\",\n  \"alpha2\": \"string\",\n  \"alpha3\": \"string\",\n  \"numeric\": \"string\",\n  \"active\": true,\n  \"currencies\": [\n    {\n      \"name\": \"string\",\n      \"active\": true\n    }\n  ]\n}",
+									"raw": "{\n    \"id\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"name\": \"string\",\n  \"alpha2\": \"string\",\n  \"alpha3\": \"string\",\n  \"numeric\": \"string\",\n  \"active\": true,\n  \"currencies\": [\n    {\n      \"name\": \"string\",\n      \"active\": true\n    }\n  ]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -254,7 +254,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(204);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -279,7 +279,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://localhost:7164/api/Countries/:id",
+									"raw": "https://localhost:7164/api/Countries/3fa85f64-5717-4562-b3fc-2c963f66afa6",
 									"protocol": "https",
 									"host": [
 										"localhost"
@@ -288,14 +288,7 @@
 									"path": [
 										"api",
 										"Countries",
-										":id"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "urn:uuid:04ba05f9-6a00-b707-d1bc-59c04322d824",
-											"description": "(Required) "
-										}
+										"3fa85f64-5717-4562-b3fc-2c963f66afa6"
 									]
 								}
 							},
@@ -435,7 +428,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(204);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -446,7 +439,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "https://localhost:7164/api/Countries/:id",
+									"raw": "https://localhost:7164/api/Countries/3fa85f64-5717-4562-b3fc-2c963f66afa6",
 									"protocol": "https",
 									"host": [
 										"localhost"
@@ -455,14 +448,7 @@
 									"path": [
 										"api",
 										"Countries",
-										":id"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "urn:uuid:04ba05f9-6a00-b707-d1bc-59c04322d824",
-											"description": "(Required) "
-										}
+										"3fa85f64-5717-4562-b3fc-2c963f66afa6"
 									]
 								}
 							},
@@ -518,7 +504,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(201);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -690,7 +676,7 @@
 									}
 								],
 								"url": {
-									"raw": "https://localhost:7164/api/Currencies/CountriesByCurrency/:predicate",
+									"raw": "https://localhost:7164/api/Currencies/CountriesByCurrency/string",
 									"protocol": "https",
 									"host": [
 										"localhost"
@@ -700,14 +686,7 @@
 										"api",
 										"Currencies",
 										"CountriesByCurrency",
-										":predicate"
-									],
-									"variable": [
-										{
-											"key": "predicate",
-											"value": "et nisi ",
-											"description": "(Required) "
-										}
+										"string"
 									]
 								}
 							},
@@ -759,7 +738,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(204);\r",
 											"});"
 										],
 										"type": "text/javascript"
@@ -932,7 +911,7 @@
 									"script": {
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.have.status(204);\r",
 											"});"
 										],
 										"type": "text/javascript"
