@@ -2,8 +2,13 @@
 Gebou in .net 6 <br>
 Eerste keer wat ek .net 6 gebruik so dit het meer tyd gevet as wat ek gedink het. Ek het wel geleentheid gevat om die raamwerk beter te leer ken. <br>
 My ervaring met Entity framework as databasis bestuur bring gereeld die probleem van self verwanskap voor wat lui na eindloose loops, en met die simplistiese databasis van die taak het ek geleentheid gevat om nuwe oplossings te probeer. <br>
+
+
+[Demo](https://github.com/MarkusGitName/CountriesDemo)
+
 # Postman
 Die postman github action werk nie op die oomblik nie maaar die collection is gestoor by <link> en kan ge import word in postman en daar gehardloop kan word. Die collection toets elke endpoint, maak seker die api reageer soos verwag word, maak seker data word ge update soos verwag word en maak skoon agterna. 
+
 
 # databasis
 
