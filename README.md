@@ -1,7 +1,7 @@
 # CountryApi
 
 Build .net 6 <br>
-First time building in net 6 so the project took a bit longer than usually. I did however take advantage of the opertunity to explore .net 6 and whats new in the framework. <br>
+First time building in net 6 so the project took a bit longer than usually. I did however take advantage of the opportunity to explore .net 6 and what’s new in the framework. <br>
 
 [Demo](https://github.com/MarkusGitName/CountriesDemo)
 
@@ -9,29 +9,29 @@ First time building in net 6 so the project took a bit longer than usually. I di
 
 ## Postman
 
-I could not get the Github Action that runs the postman collection on any merge or push to master branch to run succesfully. Need a bit more time to automate the integration tests but the postman collection can be found in Postman folder and can be imported and run manually from Postman.
+I could not get the Github Action that runs the postman collection on any merge or push to master branch to run successfully. Need a bit more time to automate the integration tests but the postman collection can be found in Postman folder and can be imported and run manually from Postman.
 
 ## Unit Testing
 
-Unfortunatly because of time, I did not get to writing any Unit Tests. However, because of the scope of the project and the fact that there is not really complex computing happening and more focussed on Integration, I thought its better to focus on integration testing. 
+Unfortunately, because of time, I did not get to writing any Unit Tests. However, because of the scope of the project and the fact that there is not complex computing happening and more focussed on Integration, I thought it’s better to focus on integration testing. 
 
-# DataBase
+# Database
 
-Entity framework is used for DataBase interactions.
-My Experience with Entity Framwork almost always pressents the same problem of self reference loops, and even though I have a couple sollutions I thought this to be a good opportunity to re-think my usual approuch.
+Entity framework is used for Database interactions.
+My Experience with Entity Framework almost always presents the same problem of self-reference loops, and even though I have a couple solutions I thought this to be a good opportunity to re-think my usual approach.
 
 This commands generate the scripts to create or the database
-> add-migrataion migrationName
+> add-migration migrationName
 
-This command runs the scripts generated in the previous  command
+This command runs the scripts generated in the previous command
 > update-database
 
 These scripts can be found in Migration folder in the project
 
 ## Models
 
-Three distinct type of model klasses exist. Table, Database, and Transfer models. Table models directly represents the fields of each table in the database and contains no relationship information. The database models contains all the relationship within the database and inherints the field properties from table models. Confusingly the database models is named with 'Table' appended (ModelTable) because these models is used by entity framework and the database context to generate the actual sql tables.<br>
-Lastly we have the transfer models witch is used when responding to requests. These models also inherits the field properties from the table models and contains the necesarry related objects, but the related objects only have the field properties present and no additional child properties. Thus no self referencing loops is possible.<br>
+Three distinct type of model classes exist. Table, Database, and Transfer models. Table models directly represents the fields of each table in the database and contains no relationship information. The database models contain all the relationship within the database and inherits the field properties from table models. Confusingly the database models is named with 'Table' appended (ModelTable) because these models is used by entity framework and the database context to generate the actual sql tables.<br>
+Lastly, we have the transfer models which is used when responding to requests. These models also inherit the field properties from the table models and contains the necessary related objects, but the related objects only have the field properties present and no additional child properties. Thus no self-referencing loops is possible.<br>
 
 ### Table Models
 
@@ -39,7 +39,7 @@ Lastly we have the transfer models witch is used when responding to requests. Th
 
     public class Country
     {
-        public Country(Guid id,string name,string alpha2,string alpha3,string numeric,bool active )
+        public Country(Guid id, string name, string alpha2, string alpha3, string numeric, bool active )
         {
             Id = id;
             Name = name;
@@ -158,7 +158,7 @@ Lastly we have the transfer models witch is used when responding to requests. Th
 
 # Endpoints
 
-Full CRUD opperation was generated via Entity Framework. I tok the opertunity to see whats new in .net 6 and the code scaffolding template. With some minor adjustments and the model classes structure, I managed to include the first layer of child objects in requests or responses while avoiding self referenses.<br>
+Full CRUD operation was generated via Entity Framework. I took the opportunity to see what’s new in .net 6 and the code scaffolding template. With some minor adjustments and the model classes structure, I managed to include the first layer of child objects in requests or responses while avoiding self references.<br>
 
  ## api/Countries
  
@@ -178,13 +178,13 @@ Full CRUD opperation was generated via Entity Framework. I tok the opertunity to
 
 ## Swagger/openApi
 
-The API description json document gets generated from the code allong with a gui where the endpoints can be explored and even tested. The gui and json can be found at https://localhost:7164/swagger/index.html.<br>
-I make use of the generated json to build the postman collection by importing it into Postman, shuffeling the requests and adding Tests.
+The API description json document gets generated from the code along with a GUI where the endpoints can be explored and even tested. The GUI and json can be found at https://localhost:7164/swagger/index.html.<br>
+I make use of the generated json to build the postman collection by importing it into Postman, shuffling the requests and adding Tests.
 
 
 # Docker
 
-Docker build command creates the docker image whitch is later used in docker-compose file.<br>
+Docker build command creates the docker image which is later used in docker-compose file.<br>
 The -t tag is used to name the repo and image name for reference in the docker-compose file
 
 > docker build -t reponame/reponame/imagename pathToDockefile
@@ -294,7 +294,7 @@ Make sure to cd to the directory that contains the compose file if the location 
 ## Nginx Config
 
 The following command is run on the host to generates SSl certificates. Volume mapping is used to map the certificates from the host to the container. <br>
-The below code snipped is a file named nginx.conf. Nginx makes use of it to pass requests on to the correct container. te conf file is also used to redirect requests from http to https ports.
+The below code snipped is a file named nginx.conf. Nginx makes use of it to pass requests on to the correct container. The conf file is also used to redirect requests from http to https ports.
 
 > sudo -H ./letsencrypt-auto certonly --standalone -d <domain>.com -d www.<domain>
 
@@ -329,13 +329,11 @@ The below code snipped is a file named nginx.conf. Nginx makes use of it to pass
 </code>
 
 ## docker Volumes
-
-Die volume mapping word gebruik om data te persist as die container ge-restart moet word of net op failure. Databsis data word na die host to gemap in die countryapi container en dan word die ssl en nginx config files van die host af na die proxy container toe gemap.<br> 
-Volume Mapping is used to persist data on the host machine incase of container restart or failure. The database files gets mapped from container to host to persist the database data and then nginx config file aswell as ssl certificates gets mapped from host to container as resurces.<br>
+Volume Mapping is used to persist data on the host machine in case of container restart or failure. The database files gets mapped from container to host to persist the database data and then nginx config file as well as ssl certificates gets mapped from host to container as resources.<br>
 
 ## Docker networking
 
- Looking at the comose file you'le notice the network tag. the network tag is used to network your containers together. This way all port mapping and port exposure can be removed from the containers. Only the port on whitch nginx listens is exposed to the public. This makes it really difficuild for hacker to access your containers.
- If this project is started up using the compose file make sure to update the connection string before running build command to: "Data Source = countrydb; Initial Catalog = CountriesGuid; User ID = sa; Password=Markus@2"
- Unfortunatly the migration commands needs to be run on the database container before the api container can startup properly as I do not outomate the database creation. This is easy to overcome: run compose up command, wait for database container to startup(api container will fail), update connection string to host,1433, then run the migration commands to update the database and then run the compose up command again. The database should be generated and the api container should startup.
- 
+ Looking at the compose file you’ll notice the network tag. the network tag is used to network your containers together. This way all port mapping and port exposure can be removed from the containers. Only the port on which nginx listens is exposed to the public. This makes it really difficult for hacker to access your containers.
+ If this project is started up using the compose file make sure to update the connection string before running build command to: "Data Source = countrydb; Initial Catalog = CountriesDb; User ID = sa; Password=Markus@2"
+ Unfortunately, the migration commands need to be run on the database container before the api container can start up properly as I do not automate the database creation. This is easy to overcome: run compose up command, wait for database container to start up (api container will fail), update connection string to host,1433, then run the migration commands to update the database and then run the compose up command again. The database should be generated and the api container should start up.
+
