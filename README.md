@@ -1,33 +1,45 @@
 # CountryApi
-Gebou in .net 6 <br>
-Eerste keer wat ek .net 6 gebruik so dit het meer tyd gevet as wat ek gedink het. Ek het wel geleentheid gevat om die raamwerk beter te leer ken. <br>
-My ervaring met Entity framework as databasis bestuur bring gereeld die probleem van self verwanskap voor wat lui na eindloose loops, en met die simplistiese databasis van die taak het ek geleentheid gevat om nuwe oplossings te probeer. <br>
 
+Build .net 6 <br>
+First time building in net 6 so the project took a bit longer than usually. I did however take advantage of the opportunity to explore .net 6 and what’s new in the framework. <br>
 
 [Demo](https://github.com/MarkusGitName/CountriesDemo)
 
-# Postman
-Die postman github action werk nie op die oomblik nie maaar die collection is gestoor by <link> en kan ge import word in postman en daar gehardloop kan word. Die collection toets elke endpoint, maak seker die api reageer soos verwag word, maak seker data word ge update soos verwag word en maak skoon agterna. 
+# Testing
 
+## Postman
 
-# databasis
+I could not get the Github Action that runs the postman collection on any merge or push to master branch to run successfully. Need a bit more time to automate the integration tests but the postman collection can be found in Postman folder and can be imported and run manually from Postman.
 
-// from package manager
+## Unit Testing
 
-> add-migrataion migrationName
+Unfortunately, because of time, I did not get to writing any Unit Tests. However, because of the scope of the project and the fact that there is not complex computing happening and more focussed on Integration, I thought it’s better to focus on integration testing. 
 
+# Database
 
+Entity framework is used for Database interactions.
+My Experience with Entity Framework almost always presents the same problem of self-reference loops, and even though I have a couple solutions I thought this to be a good opportunity to re-think my usual approach.
+
+This commands generate the scripts to create or the database
+> add-migration migrationName
+
+This command runs the scripts generated in the previous command
 > update-database
 
-Ad die databasis se conneksie string nie na die live databasis server op my persoonlikke serbver wys nie. kan mens van die boonste twee commands gebruik maak om die databasis te genereer. Die selfde commands laat mens toe om klasse te verander soos nodig en dan die commands te hardloom om die databasis te opdateer.
+These scripts can be found in Migration folder in the project
 
-### klassse wat net die databasis tafels direk voorstel
+## Models
+
+Three distinct type of model classes exist. Table, Database, and Transfer models. Table models directly represents the fields of each table in the database and contains no relationship information. The database models contain all the relationship within the database and inherits the field properties from table models. Confusingly the database models is named with 'Table' appended (ModelTable) because these models is used by entity framework and the database context to generate the actual sql tables.<br>
+Lastly, we have the transfer models which is used when responding to requests. These models also inherit the field properties from the table models and contains the necessary related objects, but the related objects only have the field properties present and no additional child properties. Thus no self-referencing loops is possible.<br>
+
+### Table Models
 
 <code>
 
     public class Country
     {
-        public Country(Guid id,string name,string alpha2,string alpha3,string numeric,bool active )
+        public Country(Guid id, string name, string alpha2, string alpha3, string numeric, bool active )
         {
             Id = id;
             Name = name;
@@ -69,12 +81,12 @@ Ad die databasis se conneksie string nie na die live databasis server op my pers
     
 </code>
 
-### classe wat die tafels se verwanskap foorstel
+### Database Models
 
 <code>
 
     [Table("Country")]
-    public class CountryTable : Table.Country
+    public class CountryTable : Country
     {
         public CountryTable(Guid id,string name, string alpha2, string alpha3, string numeric,bool active) : base(id,name, alpha2, alpha3, numeric,active)
         {
@@ -90,7 +102,7 @@ Ad die databasis se conneksie string nie na die live databasis server op my pers
     }
     
     [Table("Currency")]
-    public class CurrencyTable : Table.Currency
+    public class CurrencyTable : Currency
     {
         public CurrencyTable(Guid id,string name, bool active) : base(id,name,active)
         {
@@ -103,7 +115,7 @@ Ad die databasis se conneksie string nie na die live databasis server op my pers
     }
 </code>
 
-### klasse wat terug gestuur word client to van API
+### Transfer Models
 
 <code>
 
@@ -143,22 +155,18 @@ Ad die databasis se conneksie string nie na die live databasis server op my pers
     }
 </code>
 
-## Beskrywing
 
-Die klasse is so opgestel dat ek enige verwanskappe kan vermy wat dalk na n self vewanskappe kan lui. Die generise 'Currency' en 'Country' klasse se 'Properties' stem direk ooreen met die 'Fields' van die databasis. Die volgende klasse genoemd
-'CurrencyTable' en 'CountryTable' behou die verwanskap tussen die twee tafels. Die klasse word vermy as ek data terug stuur na die klient. Ek noem hulle spesifiek met 'Table' agterna omdat die klasse gebruik work deer Entity framwork om die databasis en sy verwantskappe te genereer. <br>
-Laastens is die 'Transfer' klasse. Hulle het Kinder klasse maar omdat ek gebruik maak van die generiese 'Country' en 'Currency' klasse is daar geen opvolgende kinder klasse teenwoordig nie. Hinheretance word dan gebruik om om die generise klasse se 'properties' in die twee funksie spesifieke knlasse in te bring.
+# Endpoints
 
-# Eindpunte
-Ek het die volle CRUD gebou met die gedagte om te sien hoe .net6 saam Entity Framework die Databasis struktuut hanteer en alhowel daar baie kode is, is meeste van dit ge genereer deer entity framwork.
+Full CRUD operation was generated via Entity Framework. I took the opportunity to see what’s new in .net 6 and the code scaffolding template. With some minor adjustments and the model classes structure, I managed to include the first layer of child objects in requests or responses while avoiding self references.<br>
+
  ## api/Countries
+ 
  1. get // All
  2. get(guid Id) // ById
  3. post(Country object) // Create
  4. put // Edit
- 5. get(string predicate) // byPredicate: Enige oorstemming met die predicate en aplha2, alpha3, of numeric van n country wat op die databasis gestoor is word terug gestuur deur die API.
-
-Country se Put en Post hanteer al hull kind objekte
+ 5. get(string predicate)// URL-api/Countries/ByPredicate/{predicate} byPredicate: returns country whose Name, Alpha2, Alpha3 or Numeric fieds match the predicate.
 
 
 ## api/Currencies
@@ -166,21 +174,21 @@ Country se Put en Post hanteer al hull kind objekte
  2. get(guid Id) // ById
  3. post(Country object) // Create
  4. put // Edit
- 5. get(string predicate) // byPredicate: all die countries met die currency wat se naam ooreen stem met predicate word terug gestuur
+ 5. get(string predicate) // CountriesByCurrency: returns all countries that make use of the currency specified with the predicate
 
 ## Swagger/openApi
-Die voledige API beskywing met voorbeel request in json formaat voleerd met a interface word ge genereer as https://<host>/swagger URL besoek word.<br>
-Die json dokument kan dan in Postman ge importeer word en n voleedige colleksie van versokke wat elke eindpunt in die api toets word ge genereer. Met bietjie manipulasie is dit maklik om a postman colleksie the maak wat automatiese opvolgende versoeke na die API uitvoer en so die integrasie toetsing automatiseer.  
+
+The API description json document gets generated from the code along with a GUI where the endpoints can be explored and even tested. The GUI and json can be found at https://localhost:7164/swagger/index.html.<br>
+I make use of the generated json to build the postman collection by importing it into Postman, shuffling the requests and adding Tests.
+
 
 # Docker
 
+Docker build command creates the docker image which is later used in docker-compose file.<br>
+The -t tag is used to name the repo and image name for reference in the docker-compose file
+
 > docker build -t reponame/reponame/imagename pathToDockefile
 > docker build -t reponame/containername .
-
-Die tweede voorbeeld werk as die termenal op die projek se path is.<br>
--t benoem die image wat in doe container hardloop. (reponame/imagename)Word na werwys in die docker compose file
-
-
 
 <code>
 
@@ -205,88 +213,90 @@ Die tweede voorbeeld werk as die termenal op die projek se path is.<br>
     COPY --from=publish /app/publish .
     ENTRYPOINT ["dotnet", "CountryApi.dll"]
 
-    </code>
-    <code>
+</code>
 
-    </code>
+## docker-compose
 
-    ## docker-compose
-    > docker-compose up
-    Die docker compose up command werk ook net as terminaal se path n docker-compose.yml file bevat.
+Make sure to cd to the directory that contains the compose file if the location is not specified in the command.
+
+> docker-compose up
 
 <code>
 
-    version: '3.2'
+	version: '3.2'
 
-    services:
+	services:
+	 
+	  proxy:
+		container_name: proxy
+		image: nginx:latest
+		networks:
+		- countrynetwork
+		ports:
+		- "80:80"
+		- "443:443"
+		depends_on:
+		- countryapi
+		volumes:
+		- ./Resources/nginx.conf:/etc/nginx/nginx.conf
+		- /etc/letsencrypt/:/etc/letsencrypt/
+		
 
-      proxy:
-        container_name: proxy
-        image: nginx:latest
-        networks:
-        - apinetwork
-        ports:
-        - "80:80"
-        - "443:443"
-        depends_on:
-        - countryapi
-        volumes:
-        - ./Resources/nginx.conf:/etc/nginx/nginx.conf
-        - /etc/letsencrypt/:/etc/letsencrypt/
+	  countryapi:
+		container_name: countryapi
+		image: reponame/countryapi:latest
+		environment:
+		- ASPNETCORE_ENVIRONMENT=Development
+		expose:
+		- 80
+		ports:
+		- "81:80"
+		networks:
+		- countrynetwork
+		depends_on:
+		- potfoliodb
+		volumes:
+		- type: bind
+		  source: ./uploads
+		  target: /app/uploads
+		  
 
+	  countrydb:
+		image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+		expose:
+		- 1433
+		ports:
+		- "1400:1433"
+		environment:
+		- ACCEPT_EULA=Y
+		- SA_PASSWORD=Markus@2
+		- MSSQL_PID=Developer
+		networks:
+		- countrynetwork
+		volumes:
+		- type: bind
+		  source: ./data
+		  target: /var/opt/mssql/data
+		- type: bind
+		  source: ./log
+		  target: /var/opt/mssql/log
+		- type: bind
+		  source: ./secrets
+		  target: /var/opt/mssql/secrets
 
-      countryapi:
-        container_name: countryapi
-        image: reponame/imagename       // verwys na die reponame en imagename van die docker build command
-        environment:
-        - ASPNETCORE_ENVIRONMENT=Development
-        expose:
-        - 80
-        ports:
-        - "81:80"
-        depends_on:
-        - countryapi
-        networks:
-        - apinetwork
-        depends_on:
-        - countrydb
+		
 
-      countrydb:
-        image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
-        expose:
-        - 1433
-        ports:
-        - "1400:1433"
-        environment:
-        - ACCEPT_EULA=Y
-        - SA_PASSWORD=Markus@2
-        - MSSQL_PID=Developer
-        networks:
-        - apinetwork
-        volumes:
-        - type: bind
-          source: ./data
-          target: /var/opt/mssql/data
-        - type: bind
-          source: ./log
-          target: /var/opt/mssql/log
-        - type: bind
-          source: ./secrets
-          target: /var/opt/mssql/secrets
-
-
-
-    networks:
-      apinetwork:
+	networks:
+	  countrynetwork:
 
 </code>
 
-## Nginx
+## Nginx Config
 
-> sudo -H ./letsencrypt-auto certonly --standalone -d example.com -d www.example.com
+The following command is run on the host to generates SSl certificates. Volume mapping is used to map the certificates from the host to the container. <br>
+The below code snipped is a file named nginx.conf. Nginx makes use of it to pass requests on to the correct container. The conf file is also used to redirect requests from http to https ports.
 
-Die boonste command moet gehardloop word op die host om die nodige ssl sertifikate te genereer. Met die volume mapping in die nginx container trek docker die sertifikate oor van die host af na di container toe. <br>
-Die onderste file word ook met volume mapping van die host af no die nginx container to getrek. Die nginx container gebruik die config file om die versoek te verwys na die beskikbare ssl port toe. 
+> sudo -H ./letsencrypt-auto certonly --standalone -d <domain>.com -d www.<domain>
 
 <code>
 
@@ -295,7 +305,6 @@ Die onderste file word ook met volume mapping van die host af no die nginx conta
     }
 
     http {
-        client_max_body_size 80000M;
     server {
         server_name <serverUrl>;
 
@@ -307,24 +316,24 @@ Die onderste file word ook met volume mapping van die host af no die nginx conta
     server {
         server_name <serverUrl>;
         location / {
-        proxy_pass http://countryapi:80/;           // container name in compose file en die exposed port
+        proxy_pass http://countryapi:80/;           // container name in compose file and the exposed port
         }
         listen 80;
         listen 443 ssl;
-        ssl_certificate /etc/letsencrypt/live/<domain>.com/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/<domain>.com/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
         include /etc/letsencrypt/options-ssl-nginx.conf;
     }
 }
 
 </code>
 
-## Volumes
+## docker Volumes
+Volume Mapping is used to persist data on the host machine in case of container restart or failure. The database files gets mapped from container to host to persist the database data and then nginx config file as well as ssl certificates gets mapped from host to container as resources.<br>
 
-Die volume mapping word gebruik om data te persist as die container ge-restart moet word of net op failure. Databsis data word na die host to gemap in die countryapi container en dan word die ssl en nginx config files van die host af na die proxy container toe gemap.<br> 
+## Docker networking
 
-## Unit testing
-
-Ongelulig het ek nie kaans gehad om enige Unit tests te skryf nie. Die UI demo het langer geneem as wat ek verwag het.<br>
-Ek het ook meer ge-fokus op integrasie toeste aangesien die projek nie komplekse kelkelasies bevat nie en meer integrasie gefokus is. 
+ Looking at the compose file you’ll notice the network tag. the network tag is used to network your containers together. This way all port mapping and port exposure can be removed from the containers. Only the port on which nginx listens is exposed to the public. This makes it really difficult for hacker to access your containers.
+ If this project is started up using the compose file make sure to update the connection string before running build command to: "Data Source = countrydb; Initial Catalog = CountriesDb; User ID = sa; Password=Markus@2"
+ Unfortunately, the migration commands need to be run on the database container before the api container can start up properly as I do not automate the database creation. This is easy to overcome: run compose up command, wait for database container to start up (api container will fail), update connection string to host,1433, then run the migration commands to update the database and then run the compose up command again. The database should be generated and the api container should start up.
 
