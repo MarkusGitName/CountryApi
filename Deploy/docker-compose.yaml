@@ -1,0 +1,67 @@
+version: '3.2'
+
+services:
+ 
+  proxy:
+    container_name: proxy
+    image: nginx:latest
+    networks:
+    - countrynetwork
+    ports:
+    - "80:80"
+    - "443:443"
+    depends_on:
+    - countryapi
+    volumes:
+    - ./Resources/nginx.conf:/etc/nginx/nginx.conf
+    - /etc/letsencrypt/:/etc/letsencrypt/
+    
+
+  countryapi:
+    container_name: countryapi
+    image: reponame/countryapi:latest
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    expose:
+    - 80
+    ports:
+    - "81:80"
+    networks:
+    - countrynetwork
+    depends_on:
+    - potfoliodb
+    volumes:
+    - type: bind
+      source: ./uploads
+      target: /app/uploads
+      
+
+  countrydb:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    expose:
+    - 1433
+    ports:
+    - "1400:1433"
+    environment:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=Markus@2
+    - MSSQL_PID=Developer
+    networks:
+    - countrynetwork
+    volumes:
+    - type: bind
+      source: ./data
+      target: /var/opt/mssql/data
+    - type: bind
+      source: ./log
+      target: /var/opt/mssql/log
+    - type: bind
+      source: ./secrets
+      target: /var/opt/mssql/secrets
+
+    
+
+networks:
+  countrynetwork:
+
+  
