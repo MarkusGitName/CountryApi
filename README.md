@@ -333,7 +333,10 @@ Volume Mapping is used to persist data on the host machine in case of container 
 
 ## Docker networking
 
- Looking at the compose file you’ll notice the network tag. the network tag is used to network your containers together. This way all port mapping and port exposure can be removed from the containers. Only the port on which nginx listens is exposed to the public. This makes it really difficult for hacker to access your containers.
- If this project is started up using the compose file make sure to update the connection string before running build command to: "Data Source = countrydb; Initial Catalog = CountriesDb; User ID = sa; Password=Markus@2"
+ Looking at the compose file you’ll notice the network tag. the network tag is used to network your containers together. This way all port mapping and port exposure can be removed from the containers. Only the port on which nginx listens is exposed to the public. This makes it really difficult for hacker to access your containers.<br>
+ If this project is started up using the compose file make sure to update the connection string before running build command to: "Data Source = countrydb; Initial Catalog = CountriesDb; User ID = sa; Password=Markus@2".<br>
  Unfortunately, the migration commands need to be run on the database container before the api container can start up properly as I do not automate the database creation. This is easy to overcome: run compose up command, wait for database container to start up (api container will fail), update connection string to host,1433, then run the migration commands to update the database and then run the compose up command again. The database should be generated and the api container should start up.
+
+## Authentication an authorization
+For Authorization all requests need an api key to be present as a request header. Login requests is then used with a username and password to receive a service master key. Service master key is used to identify the user sending the request and needs to be present as header along with the api key header for all requests that requires authentication and roles. Service Master keys expires after a specified amount of time and then another login request is required and a new service master key awarded.
 
